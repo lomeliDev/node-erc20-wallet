@@ -1,0 +1,13 @@
+
+
+ln -s /home/erc20-wallet/tmp/supervisor_eth.conf /etc/supervisor/conf.d/supervisor_eth.conf
+
+ln -s /home/erc20-wallet/tmp/supervisor_tokens.conf /etc/supervisor/conf.d/supervisor_tokens.conf
+
+ln -s /home/erc20-wallet/tmp/supervisor_server.conf /etc/supervisor/conf.d/supervisor_server.conf
+
+ln -s /home/erc20-wallet/tmp/supervisor_notifications.conf /etc/supervisor/conf.d/supervisor_notifications.conf
+
+ln -s /home/erc20-wallet/tmp/nginx_server.conf /etc/nginx/sites-available/nginx_server.conf
+
+include /etc/nginx/sites-available/nginx_server.conf;

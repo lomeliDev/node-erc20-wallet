@@ -1,0 +1,29 @@
+{
+    "name": "erc20-wallet",
+    "version": "1.0.0",
+    "description": "Api Push Notifications and news from wallet erc20",
+    "main": "./bin/server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Miguel Lomeli <miguel@lomeli.io>",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt-nodejs": "0.0.3",
+        "body-parser": "^1.18.3",
+        "connect-multiparty": "^2.2.0",
+        "ddos": "^0.1.31",
+        "eth-lightwallet": "^4.0.0",
+        "etherscan-api": "^10.0.5",
+        "express": "^4.16.4",
+        "hooked-web3-provider": "^1.0.0",
+        "https": "^1.0.0",
+        "md5": "^2.2.1",
+        "moment": "^2.22.2",
+        "path": "^0.12.7",
+        "request": "^2.88.2",
+        "request-promise": "^4.2.5",
+        "sqlite3": "^4.1.1",
+        "uuid": "^3.3.2"
+    }
+}
