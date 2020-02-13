@@ -15,8 +15,8 @@ let idBlock = 0;
 
 
 
-function xlog(x){
-    if(configs.logB == true){
+function xlog(x) {
+    if (configs.logB == true) {
         console.log(x);
     }
 }
@@ -58,15 +58,15 @@ async function start() {
 
 
 
-function getAddress(){
+function getAddress() {
     setWeb3Provider();
-    let db = new sqlite3.Database('./db/wallet');
-    try{
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
         db.serialize(() => {
             db.all("SELECT address FROM address", (err, row) => {
                 if (!err && row.length > 0) {
                     addressGlobal = [];
-                    for(let k in row){
+                    for (let k in row) {
                         let d = row[k];
                         addressGlobal.push(d.address.toLowerCase());
                     }
@@ -75,10 +75,10 @@ function getAddress(){
                 setTimeout(() => { getAddress(); }, 30000);
             });
         });
-    } catch(e){
-        try{
+    } catch (e) {
+        try {
             db.close();
-        } catch(e){}
+        } catch (e) {}
         setTimeout(() => { getAddress(); }, 30000);
     }
 }
@@ -94,10 +94,10 @@ function getTX() {
                 setTimeout(() => { getTX(); }, 5000);
             } else {
                 xlog(response.number);
-                if(response.transactions.length > 0){
-                    for(let k in response.transactions){
+                if (response.transactions.length > 0) {
+                    for (let k in response.transactions) {
                         let d = response.transactions[k];
-                        if( d.to != null && addressGlobal.indexOf(d.to.toLowerCase()) >= 0 ){
+                        if (d.to != null && addressGlobal.indexOf(d.to.toLowerCase()) >= 0) {
                             dataTxs.push({
                                 hash: d.hash,
                                 type: 'eth',
@@ -105,23 +105,23 @@ function getTX() {
                                 desde: d.from,
                                 amount: '' + (d.value / 1.0e18),
                                 status: 0,
-                                created_at: new Date().getTime(),                                
+                                created_at: new Date().getTime(),
                             });
                         }
                     }
-                    if(dataTxs.length > 0){
-                        let db = new sqlite3.Database('./db/wallet');
-                        for(let k in dataTxs){
+                    if (dataTxs.length > 0) {
+                        let db = new sqlite3.Database(configs.pathDB);
+                        for (let k in dataTxs) {
                             let d = dataTxs[k];
-                            try{
-                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)" , d['hash'] , d['type'] , d['address'] , d['desde'] , d['amount'] , d['status'] , d['created_at'] , (err,rows)=>{});
-                            } catch(e){}
+                            try {
+                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => {});
+                            } catch (e) {}
                         }
                         db.close();
                     }
                     xlog(dataTxs);
-                }  
-                idBlock++; 
+                }
+                idBlock++;
                 setTimeout(() => { getTX(); }, 5000);
             }
         });
@@ -134,42 +134,42 @@ function getTX() {
 
 
 
-async function getTxTokens(){
+async function getTxTokens() {
     request({
-        url: "https://"+configs.redTokensETH+"/api?module=account&action=tokentx&contractaddress="+configs.token+"&page=1&offset=100&sort=desc&apikey="+configs.apiEtherScan,
+        url: "https://" + configs.redTokensETH + "/api?module=account&action=tokentx&contractaddress=" + configs.token + "&page=1&offset=100&sort=desc&apikey=" + configs.apiEtherScan,
         method: "GET",
         json: true,
         headers: {
             "content-type": "application/json",
         },
     }, (error, response, body) => {
-        if(!error && response.statusCode == 200){
+        if (!error && response.statusCode == 200) {
             let dataTxs = [];
             xlog("getTxTokens");
-            if(parseInt(body.status) == 1){
-                if(body.result.length > 0){
-                    for(let k in body.result){
+            if (parseInt(body.status) == 1) {
+                if (body.result.length > 0) {
+                    for (let k in body.result) {
                         let d = body.result[k];
-                        if( d.to != null && addressGlobal.indexOf(d.to.toLowerCase()) >= 0 && txsTokenGlobal.indexOf(d.hash.toLowerCase()) < 0 ){
+                        if (d.to != null && addressGlobal.indexOf(d.to.toLowerCase()) >= 0 && txsTokenGlobal.indexOf(d.hash.toLowerCase()) < 0) {
                             txsTokenGlobal.push(d.hash.toLowerCase());
                             dataTxs.push({
                                 hash: d.hash,
                                 type: 'token',
                                 address: d.to.toLowerCase(),
                                 desde: d.from,
-                                amount: '' + (d.value*1) / (10 ** d.tokenDecimal),
+                                amount: '' + (d.value * 1) / (10 ** d.tokenDecimal),
                                 status: 0,
-                                created_at: new Date().getTime(),                                
+                                created_at: new Date().getTime(),
                             });
                         }
                     }
-                    if(dataTxs.length > 0){
-                        let db = new sqlite3.Database('./db/wallet');
-                        for(let k in dataTxs){
+                    if (dataTxs.length > 0) {
+                        let db = new sqlite3.Database(configs.pathDB);
+                        for (let k in dataTxs) {
                             let d = dataTxs[k];
-                            try{
-                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)" , d['hash'] , d['type'] , d['address'] , d['desde'] , d['amount'] , d['status'] , d['created_at'] , (err,rows)=>{});
-                            } catch(e){}
+                            try {
+                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => {});
+                            } catch (e) {}
                         }
                         db.close();
                     }

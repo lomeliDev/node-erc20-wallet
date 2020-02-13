@@ -24,8 +24,8 @@ WHERE
 
 
 
-function xlog(x){
-    if(configs.logB == true){
+function xlog(x) {
+    if (configs.logB == true) {
         console.log(x);
     }
 }
@@ -45,33 +45,33 @@ async function sendNotificationOneSignal(data) {
         method: "POST",
         headers: headers
     };
-    let req = https.request(options, function(res) {      
+    let req = https.request(options, function(res) {
         res.on('data', function(data) {});
     });
     req.on('error', function(e) {});
     req.write(JSON.stringify(data));
     req.end();
-  }
+}
 
 
 
 async function sendNotificacion(message) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
         await sendNotificationOneSignal(message);
         resolve(null);
     }).then(function(data) {
         return data;
     });
-  }
-  
+}
+
 
 
 async function sendNotification(d) {
     return new Promise(async(resolve, reject) => {
-        let db = new sqlite3.Database('./db/wallet');
-        try{
-            db.run("UPDATE txs SET status=1 WHERE hash = ?" , d['hash'] , (err,rows)=>{});
-        } catch(e){}
+        let db = new sqlite3.Database(configs.pathDB);
+        try {
+            db.run("UPDATE txs SET status=1 WHERE hash = ?", d['hash'], (err, rows) => {});
+        } catch (e) {}
         db.close();
         let dataUsers = [];
         dataUsers.push({
@@ -81,15 +81,15 @@ async function sendNotification(d) {
             value: "" + d.uuid
         });
         let t = '';
-        if( d.type == 'eth' ){
+        if (d.type == 'eth') {
             t = 'ETH';
         } else {
             t = configs.symbolToken;
         }
-        let mensajeES = 'Acabas de recibir '+d.amount+' '+t+' con el hash ' + d.hash;
-        let mensajeEN = 'You just received '+d.amount+' '+t+' with the hash ' + d.hash;
-        let tituloES = 'Acabas de recibir '+d.amount+' '+t;
-        let tituloEN = 'You just received '+d.amount+' '+t;
+        let mensajeES = 'Acabas de recibir ' + d.amount + ' ' + t + ' con el hash ' + d.hash;
+        let mensajeEN = 'You just received ' + d.amount + ' ' + t + ' with the hash ' + d.hash;
+        let tituloES = 'Acabas de recibir ' + d.amount + ' ' + t;
+        let tituloEN = 'You just received ' + d.amount + ' ' + t;
         let messageApp = {
             app_id: configs.oneSignal.appID,
             contents: {
@@ -117,17 +117,16 @@ async function sendNotification(d) {
 }
 
 
-async function check()
-{
+async function check() {
     xlog("check");
-    let db = new sqlite3.Database('./db/wallet');
-    try{
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
         (async() => {
             await db.serialize(async() => {
-                await db.all(Sql , async(err, row) => {
+                await db.all(Sql, async(err, row) => {
                     db.close();
                     if (!err && row.length > 0) {
-                        for(let k in row){
+                        for (let k in row) {
                             let d = row[k];
                             xlog(d);
                             await sendNotification(d);
@@ -136,8 +135,8 @@ async function check()
                 });
             });
             setTimeout(() => { check(); }, 5000);
-        })();        
-    } catch(e){
+        })();
+    } catch (e) {
         db.close();
         setTimeout(() => { check(); }, 5000);
     }
@@ -148,17 +147,17 @@ async function check()
 
 async function sendNotificationNews(d) {
     return new Promise(async(resolve, reject) => {
-        let db = new sqlite3.Database('./db/wallet');
-        
-        try{
+        let db = new sqlite3.Database(configs.pathDB);
+
+        try {
             await db.serialize(async() => {
                 await db.all("SELECT uuid FROM address where type='phone'", async(err, row) => {
-                    try{
-                        db.run("UPDATE news SET status=1 WHERE uuid = ?" , d['uuid'] , (err,rows)=>{});
-                    } catch(e){}    
-                    let dataPhones = [];                
+                    try {
+                        db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => {});
+                    } catch (e) {}
+                    let dataPhones = [];
                     if (!err && row.length > 0) {
-                        for(let k in row){
+                        for (let k in row) {
                             let d = row[k];
                             dataPhones.push({
                                 field: "tag",
@@ -198,33 +197,32 @@ async function sendNotificationNews(d) {
                         },
                         filters: dataPhones
                     };
-                    await sendNotificacion(messageApp);            
+                    await sendNotificacion(messageApp);
                     db.close();
                 });
             });
-        } catch(e){
-            try{
+        } catch (e) {
+            try {
                 db.close();
-            } catch(e){}            
+            } catch (e) {}
         }
-        resolve(true);    
+        resolve(true);
     });
 }
 
 
 
 
-async function news()
-{
+async function news() {
     xlog("news");
-    let db = new sqlite3.Database('./db/wallet');
-    try{
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
         (async() => {
             await db.serialize(async() => {
-                await db.all("select * from news where status=0" , async(err, row) => {
+                await db.all("select * from news where status=0", async(err, row) => {
                     db.close();
                     if (!err && row.length > 0) {
-                        for(let k in row){
+                        for (let k in row) {
                             let d = row[k];
                             xlog(d);
                             await sendNotificationNews(d);
@@ -233,8 +231,8 @@ async function news()
                 });
             });
             setTimeout(() => { news(); }, 30000);
-        })();        
-    } catch(e){
+        })();
+    } catch (e) {
         db.close();
         setTimeout(() => { news(); }, 30000);
     }

@@ -5,7 +5,7 @@ let fs = require('fs');
 let sqlite3 = require('sqlite3').verbose();
 let f = require('../services/functions');
 let configs = require('../configs');
-let db = new sqlite3.Database('./db/wallet');
+let db = new sqlite3.Database(configs.pathDB);
 
 
 
@@ -45,7 +45,7 @@ async function save(req, res) {
         let address = p.address.toLowerCase();
         let uuid = p.uuid;
         let type = p.type;
-        let db = new sqlite3.Database('./db/wallet');
+        let db = new sqlite3.Database(configs.pathDB);
         try {
             db.serialize(() => {
                 db.all("SELECT * FROM address where address='" + address + "' and type='" + type + "'", (err, row) => {
@@ -88,7 +88,7 @@ async function newNews(req, res) {
             if (f.vC(p, 'link') && p.link != null && p.link != '') {
                 link = p.link;
             }
-            let db = new sqlite3.Database('./db/wallet');
+            let db = new sqlite3.Database(configs.pathDB);
             try {
                 db.run("INSERT INTO news (uuid,title_es,title_en,msg_es,msg_en,img,link,notify,status,created_at) values(?,?,?,?,?,?,?,?,?,?)", my_uuid, title_es, title_en, msg_es, msg_en, img, link, notify, status, created_at, (err, rows) => {
                     if (err) {
@@ -112,7 +112,7 @@ async function newNews(req, res) {
 async function getNews(req, res) {
     let p = req.body;
     if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
-        let db = new sqlite3.Database('./db/wallet');
+        let db = new sqlite3.Database(configs.pathDB);
         try {
             let dataNews = [];
             await db.serialize(async() => {
@@ -141,10 +141,10 @@ async function deleteWallet(req, res) {
     let p = req.body;
     if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
         try {
-            let w = './db/wallet';
+            let w = configs.pathDB;
             fs.unlink(w, function(err) {
                 if (!err) {
-                    let db = new sqlite3.Database('./db/wallet');
+                    let db = new sqlite3.Database(configs.pathDB);
                     db.serialize(() => {
                         db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS txs (hash TEXT NOT NULL PRIMARY KEY , type INTEGER NOT NULL , address TEXT NOT NULL , desde TEXT NOT NULL , amount TEXT NOT NUll , status INTEGER NOT NULL , created_at datetime NOT NULL)");

@@ -1,5 +1,8 @@
 'use strict'
 
+let os = require('os');
+let pathDB = null;
+
 let testnet = true;
 let port = 5050;
 let token = 'addresstoken';
@@ -12,6 +15,12 @@ let logB = false;
 let idProjectInfura = 'IDPROJECT';
 let apiEtherScan = 'APIETHERSCAN';
 
+
+if (os.platform().indexOf('win32') >= 0 || os.platform().indexOf('win64') >= 0) {
+    pathDB = 'C:/apps/node-erc20-wallet/db/wallet';
+} else {
+    pathDB = '/home/<Mi-CARPETA-DEL-REPO>/db/wallet';
+}
 
 
 if (testnet == true) {
@@ -44,6 +53,8 @@ let passAdmin = 'admin';
 
 
 
+
+
 module.exports = {
     redETH,
     redTokensETH,
@@ -56,5 +67,6 @@ module.exports = {
     symbolToken,
     imgPush,
     pathAdmin,
-    passAdmin
+    passAdmin,
+    pathDB
 };
