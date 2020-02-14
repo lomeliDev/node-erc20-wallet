@@ -28,7 +28,7 @@ function init(req, res) {
 
 
 function pathAdmin(req, res) {
-    fs.readFile('./tmp/admin.html', function(err, html) {
+    fs.readFile(configs.pathServer + 'tmp/admin.html', function(err, html) {
         res.writeHeader(200, { "Content-Type": 'text/html' });
         res.write(html);
         res.end();
