@@ -1,7 +1,7 @@
 {
     "name": "erc20-wallet",
     "version": "1.0.0",
-    "description": "Api Push Notifications and news from wallet erc20",
+    "description": "Api Push Notifications and news from wallet erc20.",
     "main": "./bin/server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"

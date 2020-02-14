@@ -112,28 +112,28 @@ async function newNews(req, res) {
 
 async function getNews(req, res) {
     let p = req.body;
-    if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
-        let db = new sqlite3.Database(configs.pathDB);
-        try {
-            let dataNews = [];
-            await db.serialize(async() => {
-                await db.all("SELECT * FROM news order by created_at desc limit 100", async(err, row) => {
-                    if (!err && row.length > 0) {
-                        for (let k in row) {
-                            let d = row[k];
-                            dataNews.push(d);
-                        }
+    //if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
+        let dataNews = [];
+        await db.serialize(async() => {
+            await db.all("SELECT * FROM news order by created_at desc limit 100", async(err, row) => {
+                if (!err && row.length > 0) {
+                    for (let k in row) {
+                        let d = row[k];
+                        dataNews.push(d);
                     }
-                    db.close();
-                    res.status(200).send({ status: true, msg: 'OK', data: dataNews });
-                });
+                }
+                db.close();
+                res.status(200).send({ status: true, msg: 'OK', data: dataNews });
             });
-        } catch (e) {
-            res.status(500).send({ status: false, msg: 'Error' });
-        }
-    } else {
-        res.status(500).send({ status: false, msg: 'password incorrect' });
+        });
+    } catch (e) {
+        res.status(500).send({ status: false, msg: 'Error' });
     }
+    // } else {
+    //     res.status(500).send({ status: false, msg: 'password incorrect' });
+    // }
 }
 
 
@@ -173,28 +173,28 @@ async function deleteWallet(req, res) {
 
 async function getProvider(req, res) {
     let p = req.body;
-    if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
-        let db = new sqlite3.Database(configs.pathDB);
-        try {
-            let dataProvider = null;
-            await db.serialize(async() => {
-                await db.all("SELECT * FROM provider limit 1", async(err, row) => {
-                    if (!err && row.length > 0) {
-                        for (let k in row) {
-                            let d = row[k];
-                            dataProvider = d['provider'];
-                        }
+    //if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
+        let dataProvider = null;
+        await db.serialize(async() => {
+            await db.all("SELECT * FROM provider limit 1", async(err, row) => {
+                if (!err && row.length > 0) {
+                    for (let k in row) {
+                        let d = row[k];
+                        dataProvider = d['provider'];
                     }
-                    db.close();
-                    res.status(200).send({ status: true, msg: 'OK', data: dataProvider });
-                });
+                }
+                db.close();
+                res.status(200).send({ status: true, msg: 'OK', data: dataProvider });
             });
-        } catch (e) {
-            res.status(500).send({ status: false, msg: 'Error' });
-        }
-    } else {
-        res.status(500).send({ status: false, msg: 'password incorrect' });
+        });
+    } catch (e) {
+        res.status(500).send({ status: false, msg: 'Error' });
     }
+    // } else {
+    //     res.status(500).send({ status: false, msg: 'password incorrect' });
+    // }
 }
 
 
