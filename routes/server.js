@@ -13,5 +13,9 @@ api.post('/new-news', initController.newNews);
 api.post('/get-news', initController.getNews);
 api.post('/delete-wallet', initController.deleteWallet);
 
+api.post('/get-provider', initController.getProvider);
+api.post('/set-provider', initController.setProvider);
+
+
 
 module.exports = api;

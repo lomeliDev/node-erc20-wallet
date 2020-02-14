@@ -24,6 +24,21 @@
                 </form>
             </div>
             <div class="jumbotron">
+                <h1 class="display-6">Create Provider</h1>
+                <p class="lead">Configure the provider to run web3. <button onclick="readProvider();" type="button" id="btn" class="btn btn-primary">Refresh</button></p>
+                <hr class="my-4">
+                <form onsubmit="return sendProvider();">
+                    <div class="form-group">
+                        <label for="provider">Provider</label>
+                        <input type="text" class="form-control" id="provider" name="provider" placeholder="Provider" required>
+                    </div>
+                    <button type="submit" id="btn2" class="btn btn-primary">Save</button>
+                    <div class="progress" id="loading2" style="display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="jumbotron">
                 <h1 class="display-6">Create News</h1>
                 <p class="lead">This form is to create a new news, so you can notify all users about the news.</p>
                 <hr class="my-4">
@@ -118,6 +133,69 @@
     <script src="//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script>
         let news = {};
+
+
+        function readProvider() {
+            let pwd = $("#pwd").val();
+            let a = window.location.href.split("/");
+            let last = a[(a.length - 1)];
+            let url = window.location.href.replace(last, "get-provider");
+            $.ajax({
+                async: false,
+                dataType: "json",
+                type: "POST",
+                url: url,
+                data: {
+                    "pwd": pwd
+                },
+                global: true,
+                ifModified: false,
+                processData: true,
+                contentType: "application/x-www-form-urlencoded",
+                success: function(datos) {
+                    $("#provider").val(datos["data"]);
+                },
+                error: function(jqXHR, exception) {
+                    alert(jqXHR.responseJSON.msg);
+                }
+            });
+        }
+
+
+
+        function sendProvider() {
+            let pwd = $("#pwd").val();
+            let a = window.location.href.split("/");
+            let last = a[(a.length - 1)];
+            let url = window.location.href.replace(last, "set-provider");
+            $.ajax({
+                async: false,
+                dataType: "json",
+                type: "POST",
+                url: url,
+                data: {
+                    "pwd": pwd,
+                    "provider": $("#provider").val(),
+                },
+                global: true,
+                ifModified: false,
+                processData: true,
+                contentType: "application/x-www-form-urlencoded",
+                success: function(datos) {
+                    $("#provider").val("");
+                    readProvider();
+                    alert(datos.msg);
+                    readNews();
+                },
+                error: function(jqXHR, exception) {
+                    alert(jqXHR.responseJSON.msg);
+                }
+            });
+            return false;
+        }
+
+
+
 
         function renderNews() {
             $("#listnews").html("");

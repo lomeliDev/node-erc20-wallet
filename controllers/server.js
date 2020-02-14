@@ -11,6 +11,7 @@ let db = new sqlite3.Database(configs.pathDB);
 
 
 db.serialize(() => {
+    db.run("CREATE TABLE IF NOT EXISTS provider (provider TEXT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS txs (hash TEXT NOT NULL PRIMARY KEY , type INTEGER NOT NULL , address TEXT NOT NULL , desde TEXT NOT NULL , amount TEXT NOT NUll , status INTEGER NOT NULL , created_at datetime NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS news (uuid TEXT NOT NULL PRIMARY KEY , title_es TEXT NOT NULL , title_en TEXT NOT NULL , msg_es TEXT NOT NULL , msg_en TEXT NOT NULL , img TEXT NUll , link TEXT NUll , notify TEXT NOT NULL , status INTEGER NOT NULL , created_at datetime NOT NULL)");
@@ -146,6 +147,7 @@ async function deleteWallet(req, res) {
                 if (!err) {
                     let db = new sqlite3.Database(configs.pathDB);
                     db.serialize(() => {
+                        db.run("CREATE TABLE IF NOT EXISTS provider (provider TEXT NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS txs (hash TEXT NOT NULL PRIMARY KEY , type INTEGER NOT NULL , address TEXT NOT NULL , desde TEXT NOT NULL , amount TEXT NOT NUll , status INTEGER NOT NULL , created_at datetime NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS news (uuid TEXT NOT NULL PRIMARY KEY , title_es TEXT NOT NULL , title_en TEXT NOT NULL , msg_es TEXT NOT NULL , msg_en TEXT NOT NULL , img TEXT NUll , link TEXT NUll , notify TEXT NOT NULL , status INTEGER NOT NULL , created_at datetime NOT NULL)");
@@ -168,11 +170,71 @@ async function deleteWallet(req, res) {
 }
 
 
+
+async function getProvider(req, res) {
+    let p = req.body;
+    if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
+        let db = new sqlite3.Database(configs.pathDB);
+        try {
+            let dataProvider = null;
+            await db.serialize(async() => {
+                await db.all("SELECT * FROM provider limit 1", async(err, row) => {
+                    if (!err && row.length > 0) {
+                        for (let k in row) {
+                            let d = row[k];
+                            dataProvider = d['provider'];
+                        }
+                    }
+                    db.close();
+                    res.status(200).send({ status: true, msg: 'OK', data: dataProvider });
+                });
+            });
+        } catch (e) {
+            res.status(500).send({ status: false, msg: 'Error' });
+        }
+    } else {
+        res.status(500).send({ status: false, msg: 'password incorrect' });
+    }
+}
+
+
+
+async function setProvider(req, res) {
+    let p = req.body;
+    if (f.vC(p, 'provider')) {
+        let provider = p.provider;
+        let db = new sqlite3.Database(configs.pathDB);
+        try {
+            db.serialize(() => {
+                db.all("SELECT * FROM provider", (err, row) => {
+                    if (!err && row.length <= 0) {
+                        let stmt = db.prepare("INSERT INTO provider VALUES ('" + provider + "')");
+                        stmt.run();
+                        stmt.finalize();
+                    }
+                    if (!err && row.length > 0) {
+                        let stmt = db.prepare("UPDATE provider set provider='" + provider + "'");
+                        stmt.run();
+                        stmt.finalize();
+                    }
+                    db.close();
+                });
+            });
+        } catch (e) {}
+        res.status(200).send({ status: true, msg: 'OK' });
+    } else {
+        res.status(500).send({ status: false, msg: 'enterFields' });
+    }
+}
+
+
 module.exports = {
     init,
     pathAdmin,
     save,
     newNews,
     getNews,
-    deleteWallet
+    deleteWallet,
+    getProvider,
+    setProvider
 }
