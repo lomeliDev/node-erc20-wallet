@@ -228,6 +228,22 @@ async function setProvider(req, res) {
 }
 
 
+async function setPrices(req, res) {
+    let p = req.body;
+    if (f.vC(p, 'eth') && f.vC(p, 'token')) {
+        let data = { eth: 0, token: 0 };
+        let eth = parseFloat(p.eth);
+        let token = parseFloat(p.token);
+        data.eth = (eth * 277.66) * 1;
+        data.token = (token * 0.067547) * 1;
+        res.status(200).send({ status: true, msg: 'OK', data: data });
+    } else {
+        res.status(500).send({ status: false, msg: 'enterFields' });
+    }
+}
+
+
+
 module.exports = {
     init,
     pathAdmin,
@@ -236,5 +252,6 @@ module.exports = {
     getNews,
     deleteWallet,
     getProvider,
-    setProvider
+    setProvider,
+    setPrices
 }
