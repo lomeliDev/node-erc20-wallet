@@ -16,6 +16,7 @@ api.post('/delete-wallet', initController.deleteWallet);
 api.post('/get-provider', initController.getProvider);
 api.post('/set-provider', initController.setProvider);
 
-api.post('/prices', initController.setPrices);
+api.post('/prices', initController.getPrices);
+api.post('/data-general', initController.getDataGeneral);
 
 module.exports = api;

@@ -228,7 +228,7 @@ async function setProvider(req, res) {
 }
 
 
-async function setPrices(req, res) {
+async function getPrices(req, res) {
     let p = req.body;
     if (f.vC(p, 'eth') && f.vC(p, 'token')) {
         let data = { eth: 0, token: 0 };
@@ -244,6 +244,40 @@ async function setPrices(req, res) {
 
 
 
+async function getDataGeneral(req, res) {
+    let p = req.body;
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
+        let data = { provider: null, tokenAddr: null, tokenDecimals: null, tokenSymbol: null, tokenName: null, apikeyEtherScan: null, networkEtherScan: null, timeoutScan: null };
+        let dataProvider = null;
+        await db.serialize(async() => {
+            await db.all("SELECT * FROM provider limit 1", async(err, row) => {
+                if (!err && row.length > 0) {
+                    for (let k in row) {
+                        let d = row[k];
+                        dataProvider = d['provider'];
+                    }
+                }
+                db.close();
+                data.provider = dataProvider;
+                data.tokenAddr = '0x53302445bca854f615053bcae2381f5b3db9fe78';
+                data.tokenDecimals = '18';
+                data.tokenSymbol = 'CHILA';
+                data.tokenName = 'Chila';
+                data.apikeyEtherScan = 'YourApiKey';
+                data.networkEtherScan = 'ropsten';
+                data.timeoutScan = '3000';
+                res.status(200).send({ status: true, msg: 'OK', data: data });
+            });
+        });
+    } catch (e) {
+        res.status(500).send({ status: false, msg: 'Error' });
+    }
+
+}
+
+
+
 module.exports = {
     init,
     pathAdmin,
@@ -253,5 +287,6 @@ module.exports = {
     deleteWallet,
     getProvider,
     setProvider,
-    setPrices
+    getPrices,
+    getDataGeneral,
 }
