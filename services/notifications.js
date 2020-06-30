@@ -154,7 +154,7 @@ async function sendNotificationNews(d) {
             await db.serialize(async () => {
                 await db.all("SELECT uuid, address FROM address where type='phone'", async (err, row) => {
                     try {
-                        db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => { });
+                        //db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => { });
                     } catch (e) { }
                     let dataPhones = [];
                     if (!err && row.length > 0) {
