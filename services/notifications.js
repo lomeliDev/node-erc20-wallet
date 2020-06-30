@@ -45,10 +45,10 @@ async function sendNotificationOneSignal(data) {
         method: "POST",
         headers: headers
     };
-    let req = https.request(options, function(res) {
-        res.on('data', function(data) {});
+    let req = https.request(options, function (res) {
+        res.on('data', function (data) { });
     });
-    req.on('error', function(e) {});
+    req.on('error', function (e) { });
     req.write(JSON.stringify(data));
     req.end();
 }
@@ -56,10 +56,10 @@ async function sendNotificationOneSignal(data) {
 
 
 async function sendNotificacion(message) {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         await sendNotificationOneSignal(message);
         resolve(null);
-    }).then(function(data) {
+    }).then(function (data) {
         return data;
     });
 }
@@ -67,16 +67,16 @@ async function sendNotificacion(message) {
 
 
 async function sendNotification(d) {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let db = new sqlite3.Database(configs.pathDB);
         try {
-            db.run("UPDATE txs SET status=1 WHERE hash = ?", d['hash'], (err, rows) => {});
-        } catch (e) {}
+            db.run("UPDATE txs SET status=1 WHERE hash = ?", d['hash'], (err, rows) => { });
+        } catch (e) { }
         db.close();
         let dataUsers = [];
         dataUsers.push({
             field: "tag",
-            key: "slug",
+            key: "wallet_address",
             relation: "=",
             value: "" + d.uuid
         });
@@ -121,9 +121,9 @@ async function check() {
     xlog("check");
     let db = new sqlite3.Database(configs.pathDB);
     try {
-        (async() => {
-            await db.serialize(async() => {
-                await db.all(Sql, async(err, row) => {
+        (async () => {
+            await db.serialize(async () => {
+                await db.all(Sql, async (err, row) => {
                     db.close();
                     if (!err && row.length > 0) {
                         for (let k in row) {
@@ -146,22 +146,22 @@ async function check() {
 
 
 async function sendNotificationNews(d) {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let db = new sqlite3.Database(configs.pathDB);
 
         try {
-            await db.serialize(async() => {
-                await db.all("SELECT uuid FROM address where type='phone'", async(err, row) => {
+            await db.serialize(async () => {
+                await db.all("SELECT uuid FROM address where type='phone'", async (err, row) => {
                     try {
-                        db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => {});
-                    } catch (e) {}
+                        db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => { });
+                    } catch (e) { }
                     let dataPhones = [];
                     if (!err && row.length > 0) {
                         for (let k in row) {
                             let d = row[k];
                             dataPhones.push({
                                 field: "tag",
-                                key: "slug",
+                                key: "wallet_address",
                                 relation: "=",
                                 value: "" + d["uuid"]
                             });
@@ -171,7 +171,7 @@ async function sendNotificationNews(d) {
                         }
                         dataPhones.push({
                             field: "tag",
-                            key: "slug",
+                            key: "wallet_address",
                             relation: "=",
                             value: "xxxxxxxxxxx"
                         });
@@ -204,7 +204,7 @@ async function sendNotificationNews(d) {
         } catch (e) {
             try {
                 db.close();
-            } catch (e) {}
+            } catch (e) { }
         }
         resolve(true);
     });
@@ -217,9 +217,9 @@ async function news() {
     xlog("news");
     let db = new sqlite3.Database(configs.pathDB);
     try {
-        (async() => {
-            await db.serialize(async() => {
-                await db.all("select * from news where status=0", async(err, row) => {
+        (async () => {
+            await db.serialize(async () => {
+                await db.all("select * from news where status=0", async (err, row) => {
                     db.close();
                     if (!err && row.length > 0) {
                         for (let k in row) {

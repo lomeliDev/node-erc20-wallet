@@ -14,29 +14,68 @@
         <div class="row3">
             <div class="jumbotron">
                 <h1 class="display-6">Set Password</h1>
-                <p class="lead">Enter the password to use the erc20 wallet news manager. This password is used to send new news and read the administrator's notes.</p>
+                <p class="lead">Enter the password to use the erc20 wallet news manager. This password is used to send
+                    new news and read the administrator's notes.</p>
                 <hr class="my-4">
                 <form>
                     <div class="form-group">
                         <label for="title_es">Password</label>
-                        <input type="text" class="form-control" style="width:100%" id="pwd" name="pwd" placeholder="Password" value="">
+                        <input type="text" class="form-control" style="width:100%" id="pwd" name="pwd"
+                            placeholder="Password" value="">
                     </div>
                 </form>
             </div>
             <div class="jumbotron">
                 <h1 class="display-6">Create Provider</h1>
-                <p class="lead">Configure the provider to run web3. <button onclick="readProvider();" type="button" id="btn" class="btn btn-primary">Refresh</button></p>
+                <p class="lead">Configure the provider to run web3. <button onclick="readProvider();" type="button"
+                        id="btn" class="btn btn-primary">Refresh</button></p>
                 <hr class="my-4">
                 <form onsubmit="return sendProvider();">
                     <div class="form-group">
                         <label for="provider">Provider</label>
-                        <input type="text" class="form-control" id="provider" name="provider" placeholder="Provider" required>
+                        <input type="text" class="form-control" id="provider" name="provider" placeholder="Provider"
+                            required>
                     </div>
                     <button type="submit" id="btn2" class="btn btn-primary">Save</button>
                     <div class="progress" id="loading2" style="display: none;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
                 </form>
+            </div>
+            <div class="jumbotron">
+                <h1 class="display-6">Set Price</h1>
+                <p class="lead">getPrice to run web3. <button onclick="readPrices();" type="button" id="btn"
+                        class="btn btn-primary">Refresh</button></p>
+                <hr class="my-4">
+                <form onsubmit="return sendPrices();">
+                    <div class="form-group">
+                        <label for="eth">Eth Price in USD</label>
+                        <input type="text" class="form-control" id="eth" name="eth" placeholder="Eth Price in USD"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="token">Token Price in USD</label>
+                        <input type="text" class="form-control" id="token" name="token" placeholder="Token Price in USD"
+                            required>
+                    </div>
+                    <button type="submit" id="btn2" class="btn btn-primary">Save</button>
+                    <div class="progress" id="loading2" style="display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="jumbotron">
+                <h1 class="display-6">Total Address</h1>
+                <p class="lead">Number total of adress to run web3. <button onclick="readTotalAddress();" type="button"
+                        id="btn" class="btn btn-primary">Refresh</button></p>
+                <hr class="my-4">
+                <div class="form-group">
+                    <label for="total">Total Address</label>
+                    <input type="text" class="form-control" id="total" name="total" placeholder="Total Address"
+                        required>
+                </div>
             </div>
             <div class="jumbotron">
                 <h1 class="display-6">Create News</h1>
@@ -45,19 +84,23 @@
                 <form onsubmit="return sendNews();">
                     <div class="form-group">
                         <label for="title_es">Title ES</label>
-                        <input type="text" class="form-control" id="title_es" name="title_es" placeholder="title_es" required>
+                        <input type="text" class="form-control" id="title_es" name="title_es" placeholder="title_es"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="title_en">Title EN</label>
-                        <input type="text" class="form-control" id="title_en" name="title_en" placeholder="title_en" required>
+                        <input type="text" class="form-control" id="title_en" name="title_en" placeholder="title_en"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="msg_es">MSG ES</label>
-                        <textarea class="form-control" id="msg_es" name="msg_es" rows="3" placeholder="msg_es" required></textarea>
+                        <textarea class="form-control" id="msg_es" name="msg_es" rows="3" placeholder="msg_es"
+                            required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="msg_en">MSG EN</label>
-                        <textarea class="form-control" id="msg_en" name="msg_en" rows="3" placeholder="msg_en" required></textarea>
+                        <textarea class="form-control" id="msg_en" name="msg_en" rows="3" placeholder="msg_en"
+                            required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="img">IMG</label>
@@ -76,13 +119,15 @@
                     </div>
                     <button type="submit" id="btn" class="btn btn-primary">Save</button>
                     <div class="progress" id="loading" style="display: none;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
                 </form>
             </div>
             <div class="jumbotron">
                 <h1 class="display-6">News List</h1>
-                <p class="lead">This is the list of news items that were previously sent to wallet users. <button onclick="readNews();" type="button" id="btn" class="btn btn-primary">Refresh</button></p>
+                <p class="lead">This is the list of news items that were previously sent to wallet users. <button
+                        onclick="readNews();" type="button" id="btn" class="btn btn-primary">Refresh</button></p>
                 <hr class="my-4">
                 <form>
                     <div class="form-group">
@@ -101,7 +146,9 @@
             </div>
             <div class="jumbotron">
                 <h1 class="display-6">Empty wallet</h1>
-                <p class="lead">Emptying the wallet will erase all the records and start again. <button onclick="emptyWallet();" type="button" id="btn" class="btn btn-primary">Empty wallet</button></p>
+                <p class="lead">Emptying the wallet will erase all the records and start again. <button
+                        onclick="emptyWallet();" type="button" id="btn" class="btn btn-primary">Empty wallet</button>
+                </p>
             </div>
         </div>
         <div class="modal fade" id="myModal" role="dialog">
@@ -152,10 +199,10 @@
                 ifModified: false,
                 processData: true,
                 contentType: "application/x-www-form-urlencoded",
-                success: function(datos) {
+                success: function (datos) {
                     $("#provider").val(datos["data"]);
                 },
-                error: function(jqXHR, exception) {
+                error: function (jqXHR, exception) {
                     alert(jqXHR.responseJSON.msg);
                 }
             });
@@ -181,13 +228,13 @@
                 ifModified: false,
                 processData: true,
                 contentType: "application/x-www-form-urlencoded",
-                success: function(datos) {
+                success: function (datos) {
                     $("#provider").val("");
                     readProvider();
                     alert(datos.msg);
                     readNews();
                 },
-                error: function(jqXHR, exception) {
+                error: function (jqXHR, exception) {
                     alert(jqXHR.responseJSON.msg);
                 }
             });
@@ -195,6 +242,96 @@
         }
 
 
+        function readPrices() {
+            let pwd = $("#pwd").val();
+            let a = window.location.href.split("/");
+            let last = a[(a.length - 1)];
+            let url = window.location.href.replace(last, "get-prices");
+            $.ajax({
+                async: false,
+                dataType: "json",
+                type: "POST",
+                url: url,
+                data: {
+                    "pwd": pwd
+                },
+                global: true,
+                ifModified: false,
+                processData: true,
+                contentType: "application/x-www-form-urlencoded",
+                success: function (datos) {
+                    //console.log(datos["data"]);
+                    $("#eth").val(datos["data"]["eth"]);
+                    $("#token").val(datos["data"]["token"]);
+                },
+                error: function (jqXHR, exception) {
+                    alert(jqXHR.responseJSON.msg);
+                }
+            });
+        }
+
+
+
+
+        function sendPrices() {
+            let pwd = $("#pwd").val();
+            let a = window.location.href.split("/");
+            let last = a[(a.length - 1)];
+            let url = window.location.href.replace(last, "set-prices");
+            $.ajax({
+                async: false,
+                dataType: "json",
+                type: "POST",
+                url: url,
+                data: {
+                    "pwd": pwd,
+                    "eth": $("#eth").val(),
+                    "token": $("#token").val(),
+                },
+                global: true,
+                ifModified: false,
+                processData: true,
+                contentType: "application/x-www-form-urlencoded",
+                success: function (datos) {
+                    $("#eth").val("");
+                    $("#token").val("");
+                    readPrices();
+                    alert(datos.msg);
+                },
+                error: function (jqXHR, exception) {
+                    alert(jqXHR.responseJSON.msg);
+                }
+            });
+            return false;
+        }
+
+
+
+        function readTotalAddress() {
+            let pwd = $("#pwd").val();
+            let a = window.location.href.split("/");
+            let last = a[(a.length - 1)];
+            let url = window.location.href.replace(last, "get-total");
+            $.ajax({
+                async: false,
+                dataType: "json",
+                type: "POST",
+                url: url,
+                data: {
+                    "pwd": pwd
+                },
+                global: true,
+                ifModified: false,
+                processData: true,
+                contentType: "application/x-www-form-urlencoded",
+                success: function (datos) {
+                    $("#total").val(datos["data"]["total"]);
+                },
+                error: function (jqXHR, exception) {
+                    alert(jqXHR.responseJSON.msg);
+                }
+            });
+        }
 
 
         function renderNews() {
@@ -253,7 +390,7 @@
                 ifModified: false,
                 processData: true,
                 contentType: "application/x-www-form-urlencoded",
-                success: function(datos) {
+                success: function (datos) {
                     $("#title_es").val("");
                     $("#title_en").val("");
                     $("#msg_es").val("");
@@ -264,7 +401,7 @@
                     alert(datos.msg);
                     readNews();
                 },
-                error: function(jqXHR, exception) {
+                error: function (jqXHR, exception) {
                     alert(jqXHR.responseJSON.msg);
                 }
             });
@@ -290,14 +427,14 @@
                 ifModified: false,
                 processData: true,
                 contentType: "application/x-www-form-urlencoded",
-                success: function(datos) {
+                success: function (datos) {
                     for (let k in datos["data"]) {
                         let d = datos["data"][k];
                         news[d["uuid"]] = d;
                     }
                     renderNews();
                 },
-                error: function(jqXHR, exception) {
+                error: function (jqXHR, exception) {
                     news = {};
                     renderNews();
                     alert(jqXHR.responseJSON.msg);
@@ -324,12 +461,12 @@
                     ifModified: false,
                     processData: true,
                     contentType: "application/x-www-form-urlencoded",
-                    success: function(datos) {
+                    success: function (datos) {
                         alert(datos.msg);
                         news = {};
                         renderNews();
                     },
-                    error: function(jqXHR, exception) {
+                    error: function (jqXHR, exception) {
                         alert(jqXHR.responseJSON.msg);
                     }
                 });

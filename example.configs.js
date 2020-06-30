@@ -16,6 +16,10 @@ let logB = false;
 
 let idProjectInfura = 'IDPROJECT';
 let apiEtherScan = 'APIETHERSCAN';
+let networkEtherScan = 'networkEtherScan';
+let timeoutScan = '3000';
+let tokenDecimals = '18';
+
 
 
 if (os.platform().indexOf('win32') >= 0 || os.platform().indexOf('win64') >= 0) {
@@ -67,6 +71,9 @@ module.exports = {
     logB,
     token,
     apiEtherScan,
+    networkEtherScan,
+    tokenDecimals,
+    timeoutScan,
     oneSignal,
     titleToken,
     symbolToken,

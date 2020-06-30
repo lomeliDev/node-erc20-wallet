@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(ddos.express);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin , X-Requested-With , Content-Type , Accept , Access-Control-Allow-Request-Method');
@@ -28,23 +28,23 @@ app.use(function(req, res, next) {
 
 app.use('/api', init_routes);
 
-app.get('*', function(req, res) {
-    res.status(500).send({ status: false, msg: 'ERROR' });
+app.get('*', function (req, res) {
+    res.status(500).send({ status: false, msg: 'ERROR 1' });
 });
 
-app.post('*', function(req, res) {
-    res.status(500).send({ status: false, msg: 'ERROR' });
+app.post('*', function (req, res) {
+    res.status(500).send({ status: false, msg: 'ERROR 2' });
 });
 
-app.put('*', function(req, res) {
-    res.status(500).send({ status: false, msg: 'ERROR' });
+app.put('*', function (req, res) {
+    res.status(500).send({ status: false, msg: 'ERROR 3' });
 });
 
-app.delete('*', function(req, res) {
-    res.status(500).send({ status: false, msg: 'ERROR' });
+app.delete('*', function (req, res) {
+    res.status(500).send({ status: false, msg: 'ERROR 4' });
 });
 
 
-app.listen(port, async() => {
+app.listen(port, async () => {
     console.log('Servidor corriendo correctamente');
 });

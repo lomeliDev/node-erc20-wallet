@@ -9,12 +9,12 @@ let db = new sqlite3.Database(configs.pathDB);
 
 
 
-
 db.serialize(() => {
     db.run("CREATE TABLE IF NOT EXISTS provider (provider TEXT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS txs (hash TEXT NOT NULL PRIMARY KEY , type INTEGER NOT NULL , address TEXT NOT NULL , desde TEXT NOT NULL , amount TEXT NOT NUll , status INTEGER NOT NULL , created_at datetime NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS news (uuid TEXT NOT NULL PRIMARY KEY , title_es TEXT NOT NULL , title_en TEXT NOT NULL , msg_es TEXT NOT NULL , msg_en TEXT NOT NULL , img TEXT NUll , link TEXT NUll , notify TEXT NOT NULL , status INTEGER NOT NULL , created_at datetime NOT NULL)");
+    db.run("CREATE TABLE IF NOT EXISTS prices (eth TEXT NOT NULL , token TEXT NOT NULL)");
     db.run("CREATE INDEX IF NOT EXISTS idx_address ON address (address , type)");
     db.run("CREATE INDEX IF NOT EXISTS idx_txs ON txs (hash , status)");
     db.run("CREATE INDEX IF NOT EXISTS idx_news ON news (uuid , status)");
@@ -29,7 +29,7 @@ function init(req, res) {
 
 
 function pathAdmin(req, res) {
-    fs.readFile(configs.pathServer + 'tmp/admin.html', function(err, html) {
+    fs.readFile(configs.pathServer + 'tmp/admin.html', function (err, html) {
         res.writeHeader(200, { "Content-Type": 'text/html' });
         res.write(html);
         res.end();
@@ -58,7 +58,7 @@ async function save(req, res) {
                     db.close();
                 });
             });
-        } catch (e) {}
+        } catch (e) { }
         res.status(200).send({ status: true, msg: 'OK' });
     } else {
         res.status(500).send({ status: false, msg: 'enterFields' });
@@ -98,7 +98,7 @@ async function newNews(req, res) {
                         res.status(200).send({ status: true, msg: 'news saved successfully' });
                     }
                 });
-            } catch (e) {}
+            } catch (e) { }
             db.close();
         } else {
             res.status(500).send({ status: false, msg: 'enterFields' });
@@ -116,8 +116,8 @@ async function getNews(req, res) {
     let db = new sqlite3.Database(configs.pathDB);
     try {
         let dataNews = [];
-        await db.serialize(async() => {
-            await db.all("SELECT * FROM news order by created_at desc limit 100", async(err, row) => {
+        await db.serialize(async () => {
+            await db.all("SELECT * FROM news order by created_at desc limit 100", async (err, row) => {
                 if (!err && row.length > 0) {
                     for (let k in row) {
                         let d = row[k];
@@ -143,7 +143,7 @@ async function deleteWallet(req, res) {
     if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
         try {
             let w = configs.pathDB;
-            fs.unlink(w, function(err) {
+            fs.unlink(w, function (err) {
                 if (!err) {
                     let db = new sqlite3.Database(configs.pathDB);
                     db.serialize(() => {
@@ -151,6 +151,7 @@ async function deleteWallet(req, res) {
                         db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS txs (hash TEXT NOT NULL PRIMARY KEY , type INTEGER NOT NULL , address TEXT NOT NULL , desde TEXT NOT NULL , amount TEXT NOT NUll , status INTEGER NOT NULL , created_at datetime NOT NULL)");
                         db.run("CREATE TABLE IF NOT EXISTS news (uuid TEXT NOT NULL PRIMARY KEY , title_es TEXT NOT NULL , title_en TEXT NOT NULL , msg_es TEXT NOT NULL , msg_en TEXT NOT NULL , img TEXT NUll , link TEXT NUll , notify TEXT NOT NULL , status INTEGER NOT NULL , created_at datetime NOT NULL)");
+                        db.run("CREATE TABLE IF NOT EXISTS prices (eth TEXT NOT NULL , token TEXT NOT NULL)");
                         db.run("CREATE INDEX IF NOT EXISTS idx_address ON address (address , type)");
                         db.run("CREATE INDEX IF NOT EXISTS idx_txs ON txs (hash , status)");
                         db.run("CREATE INDEX IF NOT EXISTS idx_news ON news (uuid , status)");
@@ -177,8 +178,8 @@ async function getProvider(req, res) {
     let db = new sqlite3.Database(configs.pathDB);
     try {
         let dataProvider = null;
-        await db.serialize(async() => {
-            await db.all("SELECT * FROM provider limit 1", async(err, row) => {
+        await db.serialize(async () => {
+            await db.all("SELECT * FROM provider limit 1", async (err, row) => {
                 if (!err && row.length > 0) {
                     for (let k in row) {
                         let d = row[k];
@@ -220,12 +221,70 @@ async function setProvider(req, res) {
                     db.close();
                 });
             });
-        } catch (e) {}
+        } catch (e) { }
         res.status(200).send({ status: true, msg: 'OK' });
     } else {
         res.status(500).send({ status: false, msg: 'enterFields' });
     }
 }
+
+
+
+
+async function setPrices(req, res) {
+    let p = req.body;
+    if (f.vC(p, 'eth') && f.vC(p, 'token')) {
+        let eth = p.eth;
+        let token = p.token;
+        let db = new sqlite3.Database(configs.pathDB);
+        try {
+            db.serialize(() => {
+                db.all("SELECT * FROM prices", (err, row) => {
+                    if (!err && row.length <= 0) {
+                        let stmt = db.prepare("INSERT INTO prices VALUES ('" + eth + "', '" + token + "')");
+                        stmt.run();
+                        stmt.finalize();
+                    }
+                    if (!err && row.length > 0) {
+                        let stmt = db.prepare("UPDATE prices set eth='" + eth + "' , token='" + token + "'");
+                        stmt.run();
+                        stmt.finalize();
+                    }
+                    db.close();
+                });
+            });
+        } catch (e) { }
+        res.status(200).send({ status: true, msg: 'OK' });
+    } else {
+        res.status(500).send({ status: false, msg: 'enterFields' });
+    }
+}
+
+
+async function getPrice(req, res) {
+    let p = req.body;
+    let data = { eth: 0, token: 0 };
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
+        await db.serialize(async () => {
+            await db.all("SELECT * FROM prices limit 1", async (err, row) => {
+                if (!err && row.length > 0) {
+                    for (let k in row) {
+                        let d = row[k];
+                        data.eth = parseFloat(d['eth']) * 1;
+                        data.token = parseFloat(d['token']) * 1;
+                    }
+                }
+                db.close();
+                res.status(200).send({ status: true, msg: 'OK', data: data });
+            });
+        });
+    } catch (e) {
+        res.status(500).send({ status: false, msg: 'ERROR' });
+    }
+
+}
+
 
 
 async function getPrices(req, res) {
@@ -234,9 +293,26 @@ async function getPrices(req, res) {
         let data = { eth: 0, token: 0 };
         let eth = parseFloat(p.eth);
         let token = parseFloat(p.token);
-        data.eth = (eth * 277.66) * 1;
-        data.token = (token * 0.067547) * 1;
-        res.status(200).send({ status: true, msg: 'OK', data: data });
+        let db = new sqlite3.Database(configs.pathDB);
+        try {
+            await db.serialize(async () => {
+                await db.all("SELECT * FROM prices limit 1", async (err, row) => {
+                    if (!err && row.length > 0) {
+                        for (let k in row) {
+                            let d = row[k];
+                            data.eth = parseFloat(d['eth']) * 1;
+                            data.token = parseFloat(d['token']) * 1;
+                        }
+                    }
+                    db.close();
+                    data.eth = (eth * data.eth) * 1;
+                    data.token = (token * data.token) * 1;
+                    res.status(200).send({ status: true, msg: 'OK', data: data });
+                });
+            });
+        } catch (e) {
+            res.status(500).send({ status: false, msg: 'ERROR' });
+        }
     } else {
         res.status(500).send({ status: false, msg: 'enterFields' });
     }
@@ -248,34 +324,67 @@ async function getDataGeneral(req, res) {
     let p = req.body;
     let db = new sqlite3.Database(configs.pathDB);
     try {
-        let data = { provider: null, tokenAddr: null, tokenDecimals: null, tokenSymbol: null, tokenName: null, apikeyEtherScan: null, networkEtherScan: null, timeoutScan: null };
+        let data = { eth: null, token: null, provider: null, tokenAddr: null, tokenDecimals: null, tokenSymbol: null, tokenName: null, apikeyEtherScan: null, networkEtherScan: null, timeoutScan: null };
         let dataProvider = null;
-        await db.serialize(async() => {
-            await db.all("SELECT * FROM provider limit 1", async(err, row) => {
+        await db.serialize(async () => {
+            await db.all("SELECT * FROM provider limit 1", async (err, row) => {
                 if (!err && row.length > 0) {
                     for (let k in row) {
                         let d = row[k];
                         dataProvider = d['provider'];
                     }
                 }
+                await db.all("SELECT * FROM prices limit 1", async (err, row) => {
+                    if (!err && row.length > 0) {
+                        for (let k in row) {
+                            let d = row[k];
+                            data.eth = parseFloat(d['eth']) * 1;
+                            data.token = parseFloat(d['token']) * 1;
+                        }
+                    }
+                    data.provider = dataProvider;
+                    data.tokenAddr = configs.token;
+                    data.tokenDecimals = configs.tokenDecimals;//
+                    data.tokenSymbol = configs.symbolToken;
+                    data.tokenName = configs.titleToken;
+                    data.apikeyEtherScan = configs.apiEtherScan;
+                    data.networkEtherScan = configs.networkEtherScan;///
+                    data.timeoutScan = configs.timeoutScan; //
+                    data.oneSignal_appID = configs.oneSignal.appID; //
+                    data.oneSignal_secret = configs.oneSignal.secret; //
+                    res.status(200).send({ status: true, msg: 'OK', data: data });
+                });
                 db.close();
-                data.provider = dataProvider;
-                data.tokenAddr = '0x53302445bca854f615053bcae2381f5b3db9fe78';
-                data.tokenDecimals = '18';
-                data.tokenSymbol = 'CHILA';
-                data.tokenName = 'Chila';
-                data.apikeyEtherScan = 'YourApiKey';
-                data.networkEtherScan = 'ropsten';
-                data.timeoutScan = '3000';
-                res.status(200).send({ status: true, msg: 'OK', data: data });
             });
         });
     } catch (e) {
         res.status(500).send({ status: false, msg: 'Error' });
     }
-
 }
 
+
+
+async function getTotal(req, res) {
+    let p = req.body;
+    let data = { total: 0 };
+    let db = new sqlite3.Database(configs.pathDB);
+    try {
+        await db.serialize(async () => {
+            await db.all("SELECT COUNT(*) as total FROM address limit 1", async (err, row) => {
+                if (!err && row.length > 0) {
+                    for (let k in row) {
+                        let d = row[k];
+                        data.total = parseFloat(d['total']) * 1;
+                    }
+                }
+                db.close();
+                res.status(200).send({ status: true, msg: 'OK', data: data });
+            });
+        });
+    } catch (e) {
+        res.status(500).send({ status: false, msg: 'ERROR' });
+    }
+}
 
 
 module.exports = {
@@ -283,10 +392,13 @@ module.exports = {
     pathAdmin,
     save,
     newNews,
+    setPrices,
     getNews,
     deleteWallet,
     getProvider,
     setProvider,
     getPrices,
     getDataGeneral,
+    getPrice,
+    getTotal
 }
