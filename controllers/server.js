@@ -7,8 +7,6 @@ let f = require('../services/functions');
 let configs = require('../configs');
 let db = new sqlite3.Database(configs.pathDB);
 
-
-
 db.serialize(() => {
     db.run("CREATE TABLE IF NOT EXISTS provider (provider TEXT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS address (address TEXT NOT NULL , uuid TEXT NOT NULL , type TEXT NOT NULL)");
@@ -21,12 +19,9 @@ db.serialize(() => {
 });
 db.close();
 
-
 function init(req, res) {
     res.status(500).send({ status: false, msg: 'ERROR' });
 }
-
-
 
 function pathAdmin(req, res) {
     fs.readFile(configs.pathServer + 'tmp/admin.html', function (err, html) {
@@ -36,12 +31,9 @@ function pathAdmin(req, res) {
     });
 }
 
-
-
-
-
 async function save(req, res) {
     let p = req.body;
+    //phone
     if (f.vC(p, 'address') && f.vC(p, 'uuid') && f.vC(p, 'type')) {
         let address = p.address.toLowerCase();
         let uuid = p.uuid;
@@ -64,7 +56,6 @@ async function save(req, res) {
         res.status(500).send({ status: false, msg: 'enterFields' });
     }
 }
-
 
 async function newNews(req, res) {
     let p = req.body;
@@ -108,8 +99,6 @@ async function newNews(req, res) {
     }
 }
 
-
-
 async function getNews(req, res) {
     let p = req.body;
     //if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
@@ -135,8 +124,6 @@ async function getNews(req, res) {
     //     res.status(500).send({ status: false, msg: 'password incorrect' });
     // }
 }
-
-
 
 async function deleteWallet(req, res) {
     let p = req.body;
@@ -170,8 +157,6 @@ async function deleteWallet(req, res) {
     }
 }
 
-
-
 async function getProvider(req, res) {
     let p = req.body;
     //if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
@@ -197,8 +182,6 @@ async function getProvider(req, res) {
     //     res.status(500).send({ status: false, msg: 'password incorrect' });
     // }
 }
-
-
 
 async function setProvider(req, res) {
     let p = req.body;
@@ -227,9 +210,6 @@ async function setProvider(req, res) {
         res.status(500).send({ status: false, msg: 'enterFields' });
     }
 }
-
-
-
 
 async function setPrices(req, res) {
     let p = req.body;
@@ -260,7 +240,6 @@ async function setPrices(req, res) {
     }
 }
 
-
 async function getPrice(req, res) {
     let p = req.body;
     let data = { eth: 0, token: 0 };
@@ -284,8 +263,6 @@ async function getPrice(req, res) {
     }
 
 }
-
-
 
 async function getPrices(req, res) {
     let p = req.body;
@@ -317,8 +294,6 @@ async function getPrices(req, res) {
         res.status(500).send({ status: false, msg: 'enterFields' });
     }
 }
-
-
 
 async function getDataGeneral(req, res) {
     let p = req.body;
@@ -362,8 +337,6 @@ async function getDataGeneral(req, res) {
     }
 }
 
-
-
 async function getTotal(req, res) {
     let p = req.body;
     let data = { total: 0 };
@@ -387,6 +360,35 @@ async function getTotal(req, res) {
 }
 
 
+
+
+async function deleteNews(req, res) {
+    let p = req.body;
+    if (f.vC(p, 'pwd') && p.pwd == configs.passAdmin) {
+        if (f.vC(p, 'uuid')) {
+            let uuid = p.uuid;
+            let db = new sqlite3.Database(configs.pathDB);
+            try {
+                db.run("DELETE FROM news WHERE uuid = ?", uuid, (err, rows) => {
+                    if (err) {
+                        res.status(500).send({ status: false, msg: 'error deleted the news' });
+                    } else {
+                        res.status(200).send({ status: true, msg: 'news deleted successfully' });
+                    }
+                });
+            } catch (e) { }
+            db.close();
+        } else {
+            res.status(500).send({ status: false, msg: 'enterFields' });
+        }
+    } else {
+        res.status(500).send({ status: false, msg: 'password incorrect' });
+    }
+}
+
+
+
+
 module.exports = {
     init,
     pathAdmin,
@@ -400,5 +402,6 @@ module.exports = {
     getPrices,
     getDataGeneral,
     getPrice,
-    getTotal
+    getTotal,
+    deleteNews
 }

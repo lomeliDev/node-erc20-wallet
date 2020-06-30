@@ -78,7 +78,7 @@ function getAddress() {
     } catch (e) {
         try {
             db.close();
-        } catch (e) {}
+        } catch (e) { }
         setTimeout(() => { getAddress(); }, 30000);
     }
 }
@@ -114,8 +114,8 @@ function getTX() {
                         for (let k in dataTxs) {
                             let d = dataTxs[k];
                             try {
-                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => {});
-                            } catch (e) {}
+                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => { });
+                            } catch (e) { }
                         }
                         db.close();
                     }
@@ -135,6 +135,7 @@ function getTX() {
 
 
 async function getTxTokens() {
+    //console.log("https://" + configs.redTokensETH + "/api?module=account&action=tokentx&contractaddress=" + configs.token + "&page=1&offset=100&sort=desc&apikey=" + configs.apiEtherScan);
     request({
         url: "https://" + configs.redTokensETH + "/api?module=account&action=tokentx&contractaddress=" + configs.token + "&page=1&offset=100&sort=desc&apikey=" + configs.apiEtherScan,
         method: "GET",
@@ -146,10 +147,12 @@ async function getTxTokens() {
         if (!error && response.statusCode == 200) {
             let dataTxs = [];
             xlog("getTxTokens");
+            //console.log(body);
             if (parseInt(body.status) == 1) {
                 if (body.result.length > 0) {
                     for (let k in body.result) {
                         let d = body.result[k];
+                        //console.log(addressGlobal);
                         if (d.to != null && addressGlobal.indexOf(d.to.toLowerCase()) >= 0 && txsTokenGlobal.indexOf(d.hash.toLowerCase()) < 0) {
                             txsTokenGlobal.push(d.hash.toLowerCase());
                             dataTxs.push({
@@ -168,8 +171,8 @@ async function getTxTokens() {
                         for (let k in dataTxs) {
                             let d = dataTxs[k];
                             try {
-                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => {});
-                            } catch (e) {}
+                                db.run("INSERT INTO txs(hash,type,address,desde,amount,status,created_at) values(?,?,?,?,?,?,?)", d['hash'], d['type'], d['address'], d['desde'], d['amount'], d['status'], d['created_at'], (err, rows) => { });
+                            } catch (e) { }
                         }
                         db.close();
                     }
@@ -188,5 +191,6 @@ async function getTxTokens() {
 module.exports = {
     start,
     getTxTokens,
+    getAddress
 
 };

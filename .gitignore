@@ -40,3 +40,6 @@ jspm_packages
 
 configs.js
 package-lock.json
+
+db/wallet
+/db/wallet

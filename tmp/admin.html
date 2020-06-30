@@ -137,6 +137,7 @@
                                     <th scope="col">created_at</th>
                                     <th scope="col">title_en</th>
                                     <th scope="col">notify</th>
+                                    <th scope="col">&nbsp;</th>
                                 </tr>
                             </thead>
                             <tbody id="listnews"></tbody>
@@ -166,6 +167,11 @@
                         <p><strong>link : </strong><span id="tx_link">link</span></p>
                         <p><strong>notify : </strong><span id="tx_notify">notify</span></p>
                         <p><strong>created_at : </strong><span id="tx_created_at">created_at</span></p>
+
+                        <button onclick="deleteNew(uuidGlobal);" type="button" id="btn" class="btn btn-primary">Delete
+                            New</button>
+
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -180,6 +186,7 @@
     <script src="//stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script>
         let news = {};
+        let uuidGlobal = null;
 
 
         function readProvider() {
@@ -343,6 +350,10 @@
                         <th scope="row">` + d["created_at"] + `</th>
                         <td>` + d["title_en"] + `</td>
                         <td>` + d["notify"] + `</td>
+                        <td>delete</td>
+                        
+
+                        
                     </tr>                
                 `;
                 $("#listnews").append(html);
@@ -351,6 +362,7 @@
 
 
         function getDetailsNews(uuid) {
+            uuidGlobal = uuid;
             let d = news[uuid];
             $("#tx_uuid").html(d["uuid"]);
             $("#tx_title_es").html(d["title_es"]);
@@ -407,6 +419,45 @@
             });
             return false;
         }
+
+
+        function deleteNew(uuid) {
+
+            var __confirm = confirm("Do you want to delete the news?");
+            if (__confirm) {
+                let pwd = $("#pwd").val();
+                let a = window.location.href.split("/");
+                let last = a[(a.length - 1)];
+                let url = window.location.href.replace(last, "delete-news");
+                $.ajax({
+                    async: false,
+                    dataType: "json",
+                    type: "POST",
+                    url: url,
+                    data: {
+                        "pwd": pwd,
+                        "uuid": uuid,
+                    },
+                    global: true,
+                    ifModified: false,
+                    processData: true,
+                    contentType: "application/x-www-form-urlencoded",
+                    success: function (datos) {
+                        alert(datos.msg);
+                        news = {};
+
+
+                        readNews();
+                        renderNews();
+                    },
+                    error: function (jqXHR, exception) {
+                        alert(jqXHR.responseJSON.msg);
+                    }
+                });
+            }
+            return false;
+        }
+
 
 
 

@@ -13,6 +13,8 @@ api.get('/' + configs.pathAdmin, initController.pathAdmin);
 api.post('/save-address', initController.save);
 api.post('/new-news', initController.newNews);
 api.post('/get-news', initController.getNews);
+api.post('/delete-news', initController.deleteNews);
+
 api.post('/delete-wallet', initController.deleteWallet);
 
 api.post('/get-provider', initController.getProvider);

@@ -78,7 +78,7 @@ async function sendNotification(d) {
             field: "tag",
             key: "wallet_address",
             relation: "=",
-            value: "" + d.uuid
+            value: "" + d.address
         });
         let t = '';
         if (d.type == 'eth') {
@@ -111,6 +111,7 @@ async function sendNotification(d) {
             },
             filters: dataUsers
         };
+        //xlog(messageApp);
         await sendNotificacion(messageApp);
         resolve(true);
     });
@@ -151,7 +152,7 @@ async function sendNotificationNews(d) {
 
         try {
             await db.serialize(async () => {
-                await db.all("SELECT uuid FROM address where type='phone'", async (err, row) => {
+                await db.all("SELECT uuid, address FROM address where type='phone'", async (err, row) => {
                     try {
                         db.run("UPDATE news SET status=1 WHERE uuid = ?", d['uuid'], (err, rows) => { });
                     } catch (e) { }
@@ -163,7 +164,7 @@ async function sendNotificationNews(d) {
                                 field: "tag",
                                 key: "wallet_address",
                                 relation: "=",
-                                value: "" + d["uuid"]
+                                value: "" + d["address"]
                             });
                             dataPhones.push({
                                 operator: "OR"
@@ -197,6 +198,7 @@ async function sendNotificationNews(d) {
                         },
                         filters: dataPhones
                     };
+                    xlog(messageApp);
                     await sendNotificacion(messageApp);
                     db.close();
                 });

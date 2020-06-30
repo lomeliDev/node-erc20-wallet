@@ -2,6 +2,8 @@
 
 var eth = require('../services/eth');
 
+eth.getAddress();
 
-
-eth.getTxTokens();
+setTimeout(() => {
+    eth.getTxTokens();
+}, 1000);
