@@ -41,5 +41,8 @@ jspm_packages
 configs.js
 package-lock.json
 
+yarn.lock
+/yarn.lock
+
 db/wallet
 /db/wallet
